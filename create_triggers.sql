@@ -197,3 +197,14 @@ begin
 	then Insert Into driving_licences (student_id, category, valid_until) Values (new.student_id, (select category from students where id = new.student_id), date_add(curdate(), interval 30 year));
 	end if;
 end;
+
+-- check for valid production year
+delimiter |
+create trigger check_year_before_car_insert
+before insert on car
+for each row
+begin
+if new.production_year>=curdate() then 
+signal sqlstate '45000';
+end if;
+end;
